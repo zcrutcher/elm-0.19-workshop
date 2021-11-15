@@ -26,17 +26,14 @@ initialModel =
 
 -- UPDATE
 
+type Msg =
+    UpdateCurrentlySelected String
+
 
 update msg model =
-    {- 👉 TODO: If `msg.description` is "ClickedTag", then
-                set the model's `selectedTag` field to be `msg.data`
-
-       💡 HINT: record update syntax looks like this:
-
-                { model | foo = bar }
-
-    -}
-    model
+    case msg of 
+        UpdateCurrentlySelected selected ->
+            {model | selectedTag = selected}
 
 
 
@@ -54,7 +51,7 @@ view model =
                     Docs for List.member: http://package.elm-lang.org/packages/elm-lang/core/latest/List#member
         -}
         articles =
-            List.filter (\article -> True)
+            List.filter (\article -> List.member model.selectedTag article.tags)
                 model.allArticles
 
         feed =
@@ -103,9 +100,9 @@ viewTag selectedTagName tagName =
                 "tag-default"
     in
     button
-        [ class ("tag-pill " ++ otherClass)
-
-        {- 👉 TODO: Add an `onClick` handler which sends a msg
+        [ class ("tag-pill " ++ otherClass) , onClick (UpdateCurrentlySelected tagName)]
+        [ text tagName ]
+{- 👉 TODO: Add an `onClick` handler which sends a msg
                     that our `update` function above will use
                     to set the currently selected tag to `tagName`.
 
@@ -115,9 +112,6 @@ viewTag selectedTagName tagName =
 
                     👆 Don't forget to add a comma before `onClick`!
         -}
-        ]
-        [ text tagName ]
-
 
 viewTags model =
     div [ class "tag-list" ] (List.map (viewTag model.selectedTag) model.tags)
