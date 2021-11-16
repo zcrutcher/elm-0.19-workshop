@@ -26,14 +26,13 @@ initialModel =
 
 -- UPDATE
 
-type Msg =
-    UpdateCurrentlySelected String
-
 
 update msg model =
-    case msg of 
-        UpdateCurrentlySelected selected ->
-            {model | selectedTag = selected}
+    if msg.description == "ClickedTag" then
+        { model | selectedTag = msg.data }
+
+    else
+        model
 
 
 
@@ -100,18 +99,9 @@ viewTag selectedTagName tagName =
                 "tag-default"
     in
     button
-        [ class ("tag-pill " ++ otherClass) , onClick (UpdateCurrentlySelected tagName)]
+        [ class ("tag-pill " ++ otherClass), onClick { description = "ClickedTag", data = tagName } ]
         [ text tagName ]
-{- 👉 TODO: Add an `onClick` handler which sends a msg
-                    that our `update` function above will use
-                    to set the currently selected tag to `tagName`.
 
-           💡 HINT: It should look something like this:
-
-                    , onClick { description = … , data = … }
-
-                    👆 Don't forget to add a comma before `onClick`!
-        -}
 
 viewTags model =
     div [ class "tag-list" ] (List.map (viewTag model.selectedTag) model.tags)
